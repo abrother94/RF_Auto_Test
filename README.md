@@ -51,7 +51,41 @@ Install the packages and it's dependencies via `pip`
     $ all.sh
     ```
 * How to run CI test:
+    ```
+### CI Build and Test Architecture Model
 
+```
++-----------------------+            +----------------------+
+|                       |   1.       |                      |
+|  172.17.10.60         +------------>   172.17.10.64       |
+|Agent                  |            | Agent Build_RSD_PSME |
+|Robot_PSME_Auto_Test   |            |                      |
+|                       |            |                      |
+|  Jenkins Service      |            |                      |
+|       :8080           |            |                      |
++-------------------+---+            +-----+----------------+
+                    |                      |
+                    |                      |
+                    |3.                    | 2.
+                    |                      |
+                    |                      |
+                 +--v----------------------v---+
+                 |    Target: Switch or OLT    |
+                 |    172.17.10.x              |
+                 |                             |
+                 |                             |
+                 +-----------------------------+
+
+
+ 1. Start Build on Agent Build_RSD_PSME
+
+ 2. After build finished, deploy PSME package to Target and start up RF service.
+
+ 3. Start robot framework automation test to target.
+
+
+```    
+    ```
     Jenkins build and deploy to device and run all.sh test:
     ```
     $ 
