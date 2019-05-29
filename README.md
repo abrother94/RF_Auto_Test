@@ -10,7 +10,7 @@
 * [Robot Framework Install Instruction](https://github.com/robotframework/robotframework/blob/master/INSTALL.rst)
 
 * Miscellaneous
-Packages required to be installed for OpenBmc Automation.
+Packages required to be installed for RF test Automation.
 Install the packages and it's dependencies via `pip`
 
     REST base packages:
@@ -41,12 +41,19 @@ Install the packages and it's dependencies via `pip`
 
 * How to run onl EIT test:
 
-    onl EIT test:
+    ONLP EIT:
+    
+    Because of some test item need the user to remove hardware like FAN/PSU/SFP, 
+    
+    it needs to use this EIT test to check if hardware module states are OK or Not.
+    
     ```
     $ eit.sh
     ```
 
-    all test:
+    All test:
+    
+    These test based on some BASELINE service defined by OCP .
     
     Please modify all.sh
     
@@ -62,13 +69,13 @@ Install the packages and it's dependencies via `pip`
     ####################################
 
     ```   
-    start up PSME on device
+    Start up PSME on device first and then
     
     ```
     $ all.sh
     ```
 * How to run CI test:
-    ```
+
 ### CI Build and Test Architecture Model
 
 ```
@@ -102,8 +109,9 @@ Install the packages and it's dependencies via `pip`
 
 
 ```    
+    
+ ### Triger Jenkins build and deploy to device and run all.sh test: ###
+ 
     ```
-    Jenkins build and deploy to device and run all.sh test:
-    ```
-    $ 
+    http://172.17.10.60:8080/job/Build_ONL_RF/build?token=05a8ab5 
     ```
