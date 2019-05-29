@@ -59,30 +59,30 @@ Verify User Creation Without Enabling it
 
 
 
-#Verify Redfish User Persistence After Reboot
-#    [Documentation]  Verify Redfish user persistence after reboot.
-#    [Tags]  Verify_Redfish_User_Persistence_After_Reboot
-#    # Create Redfish users.
-#
-#    Redfish Create User  admin_user_12     TestPwd123  Administrator       ${False}   ${True}
-#    Redfish Create User  admin_user_13     TestPwd123  ReadOnlyUser        ${False}   ${True}
-#    Redfish Create User  operator_user_14  TestPwd123  Operator            ${False}   ${True}
-#
-#    # Reboot Device 
-#    Redfish GracefulRestart
-#
-#    # Wait device ready
-#    Sleep  180s
-#
-#    # Verify users after reboot.
-#    Redfish Verify User  admin_user_12     TestPwd123  Administrator  ${False}  ${True}
-#    Redfish Verify User  admin_user_13     TestPwd123  ReadOnlyUser   ${False}  ${True}
-#    Redfish Verify User  operator_user_14  TestPwd123  Operator       ${False}  ${True}
-#
-#    # Delete created users.
-#    Redfish.Delete  /redfish/v1/AccountService/Accounts/admin_user_12
-#    Redfish.Delete  /redfish/v1/AccountService/Accounts/admin_user_13
-#    Redfish.Delete  /redfish/v1/AccountService/Accounts/operator_user_14
+Verify Redfish User Persistence After Reboot
+    [Documentation]  Verify Redfish user persistence after reboot.
+    [Tags]  Verify_Redfish_User_Persistence_After_Reboot
+    # Create Redfish users.
+
+    Redfish Create User  admin_user_12     TestPwd123  Administrator       ${False}   ${True}
+    Redfish Create User  admin_user_13     TestPwd123  ReadOnlyUser        ${False}   ${True}
+    Redfish Create User  operator_user_14  TestPwd123  Operator            ${False}   ${True}
+
+    # Reboot Device 
+    Redfish GracefulRestart
+
+    # Wait device ready
+    Sleep  180s
+
+    # Verify users after reboot.
+    Redfish Verify User  admin_user_12     TestPwd123  Administrator  ${False}  ${True}
+    Redfish Verify User  admin_user_13     TestPwd123  ReadOnlyUser   ${False}  ${True}
+    Redfish Verify User  operator_user_14  TestPwd123  Operator       ${False}  ${True}
+
+    # Delete created users.
+    Redfish.Delete  /redfish/v1/AccountService/Accounts/admin_user_12
+    Redfish.Delete  /redfish/v1/AccountService/Accounts/admin_user_13
+    Redfish.Delete  /redfish/v1/AccountService/Accounts/operator_user_14
 
 
 Verify User Creation With locking it
