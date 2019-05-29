@@ -47,6 +47,23 @@ Install the packages and it's dependencies via `pip`
     ```
 
     all test:
+    
+    Please modify all.sh
+    
+     ```
+    ####################################
+
+    rfip=172.17.8.122:8888                  <== DUT IP 
+
+    listener=172.17.10.60:8889              <== Listener IP
+
+    FirmwareVersion=2.1.3.59.21             <== PSME version
+
+    ####################################
+
+    ```   
+    start up PSME on device
+    
     ```
     $ all.sh
     ```
