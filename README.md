@@ -1,4 +1,5 @@
 ## RSD Redfish PSME Test Automation ##
+
 * Reference from [OpenBMC Test Automation Redfish part](https://github.com/openbmc/openbmc-test-automation)
 
 **Interface Feature List**
@@ -7,30 +8,25 @@
 
 ## Installation Setup Guide ##
 
+* Under Ubuntu 16.04lts version.
+
 * [Robot Framework Install Instruction](https://github.com/robotframework/robotframework/blob/master/INSTALL.rst)
 
-* Miscellaneous
+* Pre-install
 Packages required to be installed for RF test Automation.
-Install the packages and it's dependencies via `pip`
+Install the packages and it's dependencies via `pip3`
 
-    REST base packages:
     ```
-    $ pip install -U requests
-    $ pip install -U robotframework-requests
-    $ pip install -U robotframework-httplibrary
-    ```
-
-    Python redfish library packages:
-    For more detailed intstructions see [python-redfish-library](https://github.com/DMTF/python-redfish-library)
-    ```
-    $ pip install redfish
-    ```
-
-    SSH and SCP base packages:
-    For more detailed installation instructions see [robotframework-sshlibrary](https://pypi.python.org/pypi/robotframework-sshlibrary)
-    ```
-    $ pip install robotframework-sshlibrary
-    $ pip install robotframework-scplibrary
+    $ sudo apt-get install python3-pip
+    $ sudo pip3 install robotframework
+    $ sudo pip3 install -U requests
+    $ sudo pip3 install -U robotframework-requests
+    $ sudo pip3 install -U robotframework-httplibrary
+    $ sudo pip3 install redfish
+    $ sudo pip3 install robotframework-sshlibrary
+    $ sudo pip3 install robotframework-scplibrary
+    $ sudo pip3 install beautifulsoup4>=4.6.0
+    $ sudo pip3 install lxml
     ```
 
 ## Test item ##
