@@ -76,7 +76,7 @@ Install the packages and it's dependencies via `pip`
     ```
 * How to run CI test:
 
-### CI Build and Test Architecture Model
+### [CI Build and Test Architecture Model](CI.md)
 
 ```
 +-----------------------+            +----------------------+
