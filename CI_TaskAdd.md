@@ -139,3 +139,56 @@ System.setProperty("hudson.model.DirectoryBrowserSupport.CSP","sandbox allow-scr
 
    ![screenshot](img/task_16.png) 
 
+
+## Export current docker image and import ##
+
+
+*  Export images
+
+```
+$ docker ps -a
+
+CONTAINER ID        IMAGE                   COMMAND               CREATED       STATUS           PORTS                                              NAMES
+
+d672f161ae08        jenkins/jenkins:lts     "/sbin/tini -- /us..."  5 days ago   Up 23 hours     0.0.0.0:8080->8080/tcp, 0.0.0.0:50000->50000/tcp   jenkins
+
+$ docker export --output="jenkins_2019_5_29.tar" jenkins
+
+$ cd /data/ ; tar zcvf jenkins_data.tar.gz jenkins
+
+``` 
+
+*  Export images
+   
+   Copy 
+
+   jenkins_2019_5_29.tar; jenkins_data.tar.gz to new server ./
+
+```
+$ cd ~/
+
+$ cat jenkins_2019_5_29.tar.gz	 | docker import - jenkins
+
+$ cd /date ; cp ~/jenkins_data.tar.gz ./
+
+$ chown 1000:1000 /data/jenkins
+
+```
+   Need reconfig credentials again.
+
+   ![screenshot](img/migrate_1.png) 
+
+   ![screenshot](img/migrate_2.png) 
+
+   ![screenshot](img/migrate_3.png) 
+
+* Add following to text box and save.
+
+```
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP","sandbox allow-scripts; default-src 'none'; img-src 'self' data: ; style-src 'self' 'unsafe-inline' data: ; script-src 'self' 'unsafe-inline' 'unsafe-eval' ;")
+```
+
+   ![screenshot](img/task_14.png) 
+
+
+
