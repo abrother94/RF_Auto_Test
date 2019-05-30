@@ -109,7 +109,5 @@
 
    ![Screenshot](img/mgt_node_5_2.png)    
 
-
-
-
+[Continue add tasks](CI_TaskAdd.md)
 
