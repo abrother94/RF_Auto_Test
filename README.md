@@ -112,6 +112,6 @@ Install the packages and it's dependencies via `pip`
     
  ### Triger Jenkins build and deploy to device and run all.sh test: ###
  
-    ```
+```
     http://172.17.10.60:8080/job/Build_ONL_RF/build?token=05a8ab5 
-    ```
+```
