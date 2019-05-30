@@ -101,7 +101,16 @@
 *  Add robot auto test shell command. 
 
    ![screenshot](img/task_12.png) 
+   
+   you can change "172.17.10.122" to your target IP address if have new
+   
+   one want to test.
+```
+# Target IP address, Eventlistenr IP address, PSME version
+#./all.sh 172.17.8.122:8888 172.17.10.60:8889 2.1.3.59.21
+./all.sh 172.17.10.7:8888 172.17.10.60:8889 2.1.3.59.21
 
+```
 
 *  After test need have report to recored.
 
