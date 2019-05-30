@@ -121,4 +121,21 @@
 
    ![screenshot](img/task_build.png) 
 
+* Prepre robot test result report
+
+   ![screenshot](img/task_13_1.png) 
+
+* Add following to text box and save.
+
+   ![screenshot](img/task_14.png) 
+
+```
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP","sandbox allow-scripts; default-src 'none'; img-src 'self' data: ; style-src 'self' 'unsafe-inline' data: ; script-src 'self' 'unsafe-inline' 'unsafe-eval' ;")
+```
+
+* Check robot test report.
+
+   ![screenshot](img/task_15.png) 
+
+   ![screenshot](img/task_16.png) 
 
