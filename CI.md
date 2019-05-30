@@ -51,3 +51,13 @@
 
 ## Add Slave nodes ##
 
+   * Create 2 Slave Agents 
+   ![Screenshot](img/mgt_node_1.png)   
+   ![Screenshot](img/mgt_node_2.png)   
+   ![Screenshot](img/mgt_node_3.png)   
+   ![Screenshot](img/mgt_node_4.png)   
+   ![Screenshot](img/mgt_node_4_1.png)   
+   ![Screenshot](img/mgt_node_4_2.png)   
+   ![Screenshot](img/mgt_node_4_3.png)   
+   ![Screenshot](img/mgt_node_5.png)   
+
