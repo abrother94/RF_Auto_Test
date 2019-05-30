@@ -25,18 +25,18 @@ Test Redfish Using Redfish Service Validator
 
     Redfish.Login  admin  redfish 
 
-#    ${payload}=  Create Dictionary
-#    ...  ServiceEnabled=${false}  SessionTimeout=${600}
-#    Redfish.Post  /redfish/v1/SessionService/  body=&{payload}
-#    ...  valid_status_codes=[${HTTP_OK}]
-#
-#    Download DMTF Tool  ${rsv_dir_path}  ${rsv_github_url}
-#
-#    ${output}=  Run DMTF Tool  ${rsv_dir_path}  ${command_string}
-#
-#    Redfish Service Validator Result  ${output}
-#    Last one test , disable session authentication
-#    ${payload}=  Create Dictionary
-#    ...  ServiceEnabled=${true}  SessionTimeout=${600}
-#    Redfish.Post  /redfish/v1/SessionService/  body=&{payload}
-#    ...  valid_status_codes=[${HTTP_OK}]
+    ${payload}=  Create Dictionary
+    ...  ServiceEnabled=${false}  SessionTimeout=${600}
+    Redfish.Post  /redfish/v1/SessionService/  body=&{payload}
+    ...  valid_status_codes=[${HTTP_OK}]
+
+    Download DMTF Tool  ${rsv_dir_path}  ${rsv_github_url}
+
+    ${output}=  Run DMTF Tool  ${rsv_dir_path}  ${command_string}
+
+    Redfish Service Validator Result  ${output}
+    # Last one test , disable session authentication
+    ${payload}=  Create Dictionary
+    ...  ServiceEnabled=${true}  SessionTimeout=${600}
+    Redfish.Post  /redfish/v1/SessionService/  body=&{payload}
+    ...  valid_status_codes=[${HTTP_OK}]
