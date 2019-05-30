@@ -169,12 +169,65 @@ $ cd ~/
 
 $ cat jenkins_2019_5_29.tar.gz	 | docker import - jenkins
 
+# Then it will create new docker image "jenkins" localy.
+
 $ cd /date ; cp ~/jenkins_data.tar.gz ./
 
 $ chown 1000:1000 /data/jenkins
+```
+
+Create docker file
 
 ```
-   Need reconfig credentials again.
+$ mkdir DockerFile; cd DockerFile;
+
+$ vim Dockerfile
+
+///////////////////////////////////////////////////////////////////////
+FROM jenkins
+MAINTAINER nick_huang
+
+ENV COPY_REFERENCE_FILE_LOG="/var/jenkins_home/copy_reference_file.log"
+ENV HOME="/var/jenkins_home"
+ENV HOSTNAME="d672f161ae08"
+ENV JAVA_DEBIAN_VERSION="8u212-b01-1~deb9u1"
+ENV JAVA_HOME="/docker-java-home"
+ENV JAVA_VERSION="8u212"
+ENV JENKINS_HOME="/var/jenkins_home"
+ENV JENKINS_INCREMENTALS_REPO_MIRROR="https://repo.jenkins-ci.org/incrementals"
+ENV JENKINS_SLAVE_AGENT_PORT="50000"
+ENV JENKINS_UC="https://updates.jenkins.io"
+ENV JENKINS_UC_EXPERIMENTAL="https://updates.jenkins.io/experimental"
+ENV JENKINS_VERSION="2.164.3" 
+
+EXPOSE 8080
+EXPOSE 50000
+
+///////////////////////////////////////////////////////////////////////
+
+```
+
+Save and exit
+
+Then excute below to create new images
+
+```
+$ docker build -t myjenkins . --no-cache
+```
+
+Start container from "myjenkins" docker image and run in background :
+
+```
+$   docker run --user 1000:1000 -d  -p 8080:8080 -p 50000:50000 -v /data/jenkins_home:/var/jenkins_home myjenkins /sbin/tini -- /usr/local/bin/jenkins.sh 
+```
+
+Enter container
+
+```
+$   docker exec -it d672f161ae08 /bin/bash
+```
+
+Then you can login into jenkins webpage and reconfig credentials again.
 
    ![screenshot](img/migrate_1.png) 
 
