@@ -77,7 +77,7 @@
 
    ![Screenshot](img/mgt_node_4_2.png)   
 
-*  Get into advance item. 
+*  Get into advanced items. 
 
    ![Screenshot](img/mgt_node_4_2_1.png)    
 
@@ -97,5 +97,19 @@
    
 *  Add node name "Robot_PSME_Auto_Test" and this name can be bind by specific task later.
 
+   And use the same procedures to set credentials and advanced items.
+
    ![Screenshot](img/mgt_node_5.png)   
+
+*  Launch both 2 agents. 
+
+   ![Screenshot](img/mgt_node_5_1.png)    
+
+*  2 slaves node shouble in good status. 
+
+   ![Screenshot](img/mgt_node_5_2.png)    
+
+
+
+
 
