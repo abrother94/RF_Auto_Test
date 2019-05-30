@@ -51,30 +51,51 @@
 
 ## Add Slave nodes ##
 
-* Create 2 Slave Agents  
+* Create 2 Slave Agents.  
+
+   Add slave node 1 172.17.10.65 for building onlp and redfish or related SDK.
+
    ![Screenshot](img/mgt_node_1.png) 
    
-* 
+*  Add new node.
+
    ![Screenshot](img/mgt_node_2.png)  
    
-* 
+*  Add node name "Build_RSD_PSME" and this name can be bind by specific task later.
+
    ![Screenshot](img/mgt_node_3.png)   
    
-* 
+*  Because use "SSH" to start java agent, we need add SSH credentials username and password. 
+
    ![Screenshot](img/mgt_node_4.png)   
    
-* 
+*  Add credentials.
+
    ![Screenshot](img/mgt_node_4_1.png) 
    
-* 
+*  This 172.17.10.65 username and password.
+
    ![Screenshot](img/mgt_node_4_2.png)   
-   
-* 
+
+*  Get into advance item. 
+
+   ![Screenshot](img/mgt_node_4_2_1.png)    
+
+
+*  Add Java path , if not install java, please use "sudo apt-get install default-jdk" to install. 
+
+   ![Screenshot](img/mgt_node_4_2_2.png)    
+ 
+*  Add another build server slave note for robo framework to auto testing.
+
    ![Screenshot](img/mgt_node_4_3.png)  
    
-* 
-   ![Screenshot](img/mgt_node_4_2.png)    
+*  Add 2nd node. 
+
+   ![Screenshot](img/mgt_node_2.png)    
+
    
-* 
+*  Add node name "Robot_PSME_Auto_Test" and this name can be bind by specific task later.
+
    ![Screenshot](img/mgt_node_5.png)   
 
