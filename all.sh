@@ -31,9 +31,11 @@ else
     echo "PSME FirmwareVersion ${FirmwareVersion}"
 fi
 
+testip=`echo $rfip | awk -F ":" '{print $1}'`
+
 
 ####################################
 rm -rf log*;output.xml;report.html
 curl --insecure -X POST -D headers.txt https://${rfip}/redfish/v1/SessionService/ -d '{"ServiceEnabled":true,"SessionTimeout":600}'
-robot -v OPENBMC_HOST:${rfip} -v LISTENER_HOST:${listener} -v FWV:${FirmwareVersion} redfish/
+robot -v OPENBMC_HOST:${rfip} -v LISTENER_HOST:${listener} -v FWV:${FirmwareVersion} -v TESTIP:${testip} redfish/
 

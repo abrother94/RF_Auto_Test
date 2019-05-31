@@ -10,6 +10,8 @@ Test Teardown    Test Teardown Execution
 *** Variables ***
 
 ${FirmwareVersion}  ${FWV}
+${TIP}  ${TESTIP}
+${IPV4}  { "DHCPv4": { "DHCPEnabled": false }, "IPv4Addresses": [ { "Address": "${TIP}", "SubnetMask": "255.255.252.0", "Gateway": "172.17.10.251" } ], "StaticNameServers": [ { "Address": "8.8.8.8" } ] }
 
 *** Test Cases ***
 
@@ -37,6 +39,14 @@ Verify Redfish PSME Manager Properties
     Should Be Equal As Strings  ${resp.dict["Name"]}  Manager 
     Should Not Be Empty  ${resp.dict["UUID"]}
     Should Be Equal As Strings  ${resp.dict["Status"]["State"]}  Enabled 
+
+Verify Set Static IPv4 IP address
+    [Documentation]  Verify PSME managers to set IPv4 IP address 
+    [Tags]           Verify_PSME_managers_to_set_IPv4_IP
+
+    ${payload}=  Evaluate  json.loads($IPV4)    json 
+    Redfish.Patch  /redfish/v1/Managers/1/EthernetInterfaces/1  body=${payload}
+    ...  valid_status_codes=[${HTTP_OK}]
 
 
 *** Keywords ***
