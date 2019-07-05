@@ -114,6 +114,7 @@ Redfish GracefulRestart
     ${payload}=  Create Dictionary
     ...  ResetType=GracefulRestart 
     Redfish.Post  /redfish/v1/Systems/1/Actions/ComputerSystem.Reset  body=&{payload}
+    Sleep  1s
     ...  valid_status_codes=[${HTTP_OK}]
 
 
