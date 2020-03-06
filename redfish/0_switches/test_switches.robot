@@ -14,31 +14,12 @@ ${OP_UP}  {"OperationalState": "Up"}
 
 *** Test Cases ***
 
-Verify SFP Port tx_disable function 
-    [Documentation]  Verify SFP port tx disable function 
-    [Tags]  Verify_tx_disable
+Verify Stress loop test
+    [Documentation]  Test SFP port tx disable stress test 
+    [Tags]  Test Stress loop test 
 
-    ${resp}=  Redfish.Get  /redfish/v1/EthernetSwitches/1/Ports/
- 
-    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
-
-    ${item_count}  Get Length  ${resp.dict['Members']}
-    Log to console             ${item_count} 
-
-    ${n1}  Set Variable  1
-    ${n2}  Set Variable  ${item_count} 
-
-    : FOR  ${i}  IN RANGE   ${n1}   ${n2} 
-    \  Test Tx Disable Down  ${i}
-
-    : FOR  ${i}  IN RANGE   ${n1}   ${n2} 
-    \  Test If Tx Op Down   ${i}
-
-    : FOR  ${j}  IN RANGE   ${n1}   ${n2} 
-    \  Test Tx Disable Up  ${j}
-
-    : FOR  ${i}  IN RANGE   ${n1}   ${n2} 
-    \  Test If Tx Op Up   ${i}
+    : FOR  ${i}  IN RANGE   1   50 
+    \  Test SFP Port tx_disable function  ${i} 
 
 
 *** Keywords ***
@@ -52,6 +33,35 @@ Test Teardown Execution
     [Documentation]  Do the post test teardown.
 
     redfish.Logout
+
+Test SFP Port tx_disable function 
+    [Documentation]  Verify SFP port tx disable function 
+    [Tags]  Verify_tx_disable
+    [Arguments]   ${count} 
+    Log to console  "################### COUNT[${count}] ###################" 
+
+    ${resp}=  Redfish.Get  /redfish/v1/EthernetSwitches/1/Ports/
+ 
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+    ${item_count}  Get Length  ${resp.dict['Members']}
+    Log to console             ${item_count} 
+
+    ${n1}  Set Variable  1
+    ${n2}  Set Variable  ${item_count} 
+
+
+      : FOR  ${i}  IN RANGE   ${n1}   ${n2} 
+      \  Test Tx Disable Down  ${i}
+
+      : FOR  ${i}  IN RANGE   ${n1}   ${n2} 
+      \  Test If Tx Op Down   ${i}
+
+      : FOR  ${j}  IN RANGE   ${n1}   ${n2} 
+      \  Test Tx Disable Up  ${j}
+
+      : FOR  ${i}  IN RANGE   ${n1}   ${n2} 
+      \  Test If Tx Op Up   ${i}
 
 Test Tx Disable Down
     [Documentation]  Test SFP port tx disable down function 
