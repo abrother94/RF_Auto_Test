@@ -13,13 +13,13 @@ ${ignore_err}     ${0}
 
 Download DMTF Tool
     [Documentation]  Git clone tool.
-    [Arguments]      ${rsv_dir_path}  ${rsv_github_url}
+    [Arguments]      ${rsv_dir_path}  ${rsv_github_url}  ${tool_ver}
 
     # Description of arguments:
     # rsv_dir_path    Directory path for rsv tool (e.g. "Redfish-Service-Validator").
     # rsv_github_url  Github URL link(e.g "https://github.com/DMTF/Redfish-Service-Validator").
 
-    ${rc}  ${output}=  Shell Cmd  rm -rf ${rsv_dir_path} ; git clone ${rsv_github_url} ${rsv_dir_path}
+    ${rc}  ${output}=  Shell Cmd  rm -rf ${rsv_dir_path} ; git clone ${rsv_github_url} ${rsv_dir_path};cd  ${rsv_dir_path};git reset --hard ${tool_ver}
 
 
 Run DMTF Tool
