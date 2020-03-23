@@ -30,9 +30,9 @@ Test Redfish Using Redfish Service Validator
     Redfish.Post  /redfish/v1/SessionService/  body=&{payload}
     ...  valid_status_codes=[${HTTP_OK}]
 
-    Download DMTF Tool  ${rsv_dir_path}  ${rsv_github_url}
+    Download DMTF Tool  ${rsv_dir_path}  ${rsv_github_url}  "1.3.4"
 
-    ${output}=  Run DMTF Tool  ${rsv_dir_path}  ${command_string}  "1.3.4"
+    ${output}=  Run DMTF Tool  ${rsv_dir_path}  ${command_string}
 
     Redfish Service Validator Result  ${output}
     # Last one test , disable session authentication
