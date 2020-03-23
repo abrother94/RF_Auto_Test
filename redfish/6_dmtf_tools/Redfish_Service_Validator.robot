@@ -32,7 +32,7 @@ Test Redfish Using Redfish Service Validator
 
     Download DMTF Tool  ${rsv_dir_path}  ${rsv_github_url}
 
-    ${output}=  Run DMTF Tool  ${rsv_dir_path}  ${command_string}
+    ${output}=  Run DMTF Tool  ${rsv_dir_path}  ${command_string}  "1.3.4"
 
     Redfish Service Validator Result  ${output}
     # Last one test , disable session authentication
