@@ -144,7 +144,7 @@ class bmc_redfish_utils(object):
         self.__pending_enumeration = set()
         self._rest_response_ = \
             self._redfish_.get(resource_path,
-                               valid_status_codes=[200, 404, 500])
+                               valid_status_codes=[200,  201,   404, 500])
 
         # Return empty list.
         if self._rest_response_.status != 200:
@@ -155,7 +155,7 @@ class bmc_redfish_utils(object):
         for resource in self.__pending_enumeration.copy():
             self._rest_response_ = \
                 self._redfish_.get(resource,
-                                   valid_status_codes=[200, 404, 500])
+                                   valid_status_codes=[200, 201, 404, 500])
 
             if self._rest_response_.status != 200:
                 continue
@@ -198,7 +198,7 @@ class bmc_redfish_utils(object):
                     continue
 
                 self._rest_response_ = \
-                    self._redfish_.get(resource, valid_status_codes=[200, 404, 500])
+                    self._redfish_.get(resource, valid_status_codes=[200, 201, 404, 500])
                 # Enumeration is done for available resources ignoring the
                 # ones for which response is not obtained.
                 if self._rest_response_.status != 200:

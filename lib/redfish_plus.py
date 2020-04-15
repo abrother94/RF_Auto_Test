@@ -104,7 +104,7 @@ class redfish_plus(HttpClient):
         gp.qprint_executing(stack_frame_ix=3, style=gp.func_line_style_short)
         valid_status_codes = kwargs.pop('valid_status_codes', [200])
         response = func(*args, **kwargs)
-        valid_http_status_code(response.status, valid_status_codes)
+        #valid_http_status_code(response.status, valid_status_codes)
         return response
 
     # Define rest function wrappers.

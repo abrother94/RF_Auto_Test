@@ -106,8 +106,6 @@ Test Tx Disable Up
       \    ...          Log to console  "####### Disable ######" 
 
 
-
-
 Test Tx Op Down 
     [Documentation]  Test SFP port tx disable function 
     [Tags]  Test tx_disable 
