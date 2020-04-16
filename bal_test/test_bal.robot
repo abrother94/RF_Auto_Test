@@ -20,6 +20,32 @@ Verify Restful API for BAL Test
     [Documentation]  Test BAL Restful Status 
     [Tags]  Test Bal Restful opertaion test 
 
+    Test Basic Component  
+
+*** Keywords ***
+
+Test Setup Execution
+    [Documentation]  Do test case setup tasks.
+
+    redfish.Login  
+
+Test Teardown Execution
+    [Documentation]  Do the post test teardown.
+
+    Test Disable Session service
+
+Test Disable Session service
+    [Documentation]  Disable Session Service 
+    Log to console  "################### Disable Session Service ###################" 
+
+    ${payload}=  Evaluate  json.loads($SESSION_DISABLE)    json 
+    ${resp}=  Redfish.Post  /redfish/v1/SessionService/  body=${payload}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+Test Basic Component  
+    [Documentation]  Do basic test 1.Enable All PON MAC. 2.PON/NNI Ports enable. 3.ONU Enable/Disable. 4.Flow Add/Remove 5.Send OMCI  
+    [Tags]  Basic_Component 
+
     Disable All Tx Port
 
     #PON_TYPE  SPECIFIC_ID  SPECIFIC_NUM  PON_PORT_ID
@@ -77,25 +103,9 @@ Verify Restful API for BAL Test
 
     Enable All Tx Port
 
-*** Keywords ***
 
-Test Setup Execution
-    [Documentation]  Do test case setup tasks.
 
-    redfish.Login  
 
-Test Teardown Execution
-    [Documentation]  Do the post test teardown.
-
-    Test Disable Session service
-
-Test Disable Session service
-    [Documentation]  Disable Session Service 
-    Log to console  "################### Disable Session Service ###################" 
-
-    ${payload}=  Evaluate  json.loads($SESSION_DISABLE)    json 
-    ${resp}=  Redfish.Post  /redfish/v1/SessionService/  body=${payload}
-    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
 
 Test Bal Enable 
     [Documentation]  Enable Bal 
