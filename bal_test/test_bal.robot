@@ -58,7 +58,7 @@ Verify Restful API for BAL Test
     Should Be Equal As Integers  ${item_count}  0 
 
     Enable Port  ${PON_PORT_ID}
-    Sleep  8s
+    Sleep  10s
     ${resp}=  Redfish.Get  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs 
     ${item_count}  Get Length  ${resp.dict['Members']}
     Should Be Equal As Integers  ${item_count}  1 
@@ -66,21 +66,14 @@ Verify Restful API for BAL Test
 
     : FOR  ${flow_id}  IN RANGE   0  2047  500 
     \  Sleep  1s
-    \  Test XGSPON Flow Add  1  ${flow_id}  ${PON_PORT_ID}  ONUID_IN_RANGE
+    \  Test Flow Add  1  ${flow_id}  ${PON_PORT_ID}  ONUID_IN_RANGE
     \  Sleep  1s
-    \  Test XGSPON Flow Del  ${flow_id} 
+    \  Test Flow Del  ${flow_id} 
 
-    Test XGSPON Flow Add  1  2048  ${PON_PORT_ID}  NOTONUID_IN_RANGE
-    Test XGSPON Flow Add  1  16  ${PON_PORT_ID}  ONUID_IN_RANGE
+    Test Flow Add  1  2048  ${PON_PORT_ID}  NOTONUID_IN_RANGE
+    Test Flow Add  1  16  ${PON_PORT_ID}  ONUID_IN_RANGE
 
-    ${payload_}=  Evaluate  json.loads($OMCI_RAW)    json 
-    ${length}=  get length  ${payload_["raw_data"]
-    Log to console  ====================length ${length} ================
-
-    : FOR  ${i}  IN RANGE   0   171 
-    \  Log to console  "################### raw[${payload_["raw_data"][${i}]}] ###################" 
-    \  Sleep  0.3s
-    \  ${resp}=  Redfish.Post  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs/1/Omci  body=${payload_["raw_data"][${i}]}
+    Test Send Omci  1  ${PON_PORT_ID} 
 
     Enable All Tx Port
 
@@ -359,9 +352,9 @@ Test DeActive ONU
 
     Should Be Equal As Strings  ${resp.status}  ${HTTP_OK} 
 
-Test XGSPON Flow Add 
-    [Documentation]  Test XGSPON Flow Add 
-    [Tags]  XGSPON UP/DOWN stream flow add 
+Test Flow Add 
+    [Documentation]  Test Flow Add 
+    [Tags]  UP/DOWN stream flow add 
     [Arguments]  ${ONU_ID}  ${FLOW_ID}  ${PON_ID}  ${ONUID_IN_RANGE} 
 
     ${PON_ID}=    Evaluate   ${PON_ID} - ${1}
@@ -400,9 +393,9 @@ Test XGSPON Flow Add
     \    ...    ELSE          
     \    ...          Should Not Be Equal As Strings  ${resp.status}  ${HTTP_OK}
 
-Test XGSPON Flow Del 
-    [Documentation]  Test XGSPON Flow Del 
-    [Tags]  XGSPON UP/DOWN stream flow del 
+Test Flow Del 
+    [Documentation]  Test Flow Del 
+    [Tags]  UP/DOWN stream flow del 
     [Arguments]  ${FLOW_ID}
 
     ${resp}=  Redfish.Delete  /redfish/v1/Olt/Flow/${FLOW_ID}_upstream  
@@ -410,3 +403,19 @@ Test XGSPON Flow Del
 
     ${resp}=  Redfish.Delete  /redfish/v1/Olt/Flow/${FLOW_ID}_downstream 
     Should Be Equal As Strings  ${resp.status}  ${HTTP_OK} 
+
+Test Send Omci  
+    [Documentation]  Send Omci function 
+    [Tags]  Send Omci function 
+    [Arguments]  ${ONU_ID}  ${PON_PORT_ID}
+
+    ${payload_}=  Evaluate  json.loads($OMCI_RAW)    json 
+    ${length}=  get length  ${payload_["raw_data"]
+    Log to console  ====================length ${length} ================
+
+    : FOR  ${i}  IN RANGE   0   171 
+    \  Log to console  "################### raw[${payload_["raw_data"][${i}]}] ###################" 
+    \  Sleep  0.3s
+    \  ${resp}=  Redfish.Post  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs/${ONU_ID}/Omci  body=${payload_["raw_data"][${i}]}
+
+
