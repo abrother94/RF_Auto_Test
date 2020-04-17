@@ -19,8 +19,22 @@ ${SESSION_DISABLE}  {"ServiceEnabled":false,"SessionTimeout":60}
 Verify Restful API for BAL Test
     [Documentation]  Test BAL Restful Status 
     [Tags]  Test Bal Restful opertaion test 
+    Test Bal Component  
 
-    Test Basic Component  
+Verify Restful API for ONU Range Test
+    [Documentation]  Test ONU Range 
+    [Tags]  Test ONU Rnage test 
+    Test ONU Range
+
+Verify Restful API for flow add
+    [Documentation]  Test flow add 
+    [Tags]  Test Flow add 
+    Test US DS Flow Add 
+
+Verify Restful API for omci send
+    [Documentation]  Test omci send 
+    [Tags]  Test omci send 
+    Test omci send 
 
 *** Keywords ***
 
@@ -32,7 +46,8 @@ Test Setup Execution
 Test Teardown Execution
     [Documentation]  Do the post test teardown.
 
-    Test Disable Session service
+    #Test Disable Session service
+    redfish.Logout  
 
 Test Disable Session service
     [Documentation]  Disable Session Service 
@@ -42,9 +57,9 @@ Test Disable Session service
     ${resp}=  Redfish.Post  /redfish/v1/SessionService/  body=${payload}
     Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
 
-Test Basic Component  
-    [Documentation]  Do basic test 1.Enable All PON MAC. 2.PON/NNI Ports enable. 3.ONU Enable/Disable. 4.Flow Add/Remove 5.Send OMCI  
-    [Tags]  Basic_Component 
+Test Bal Component  
+    [Documentation]  Do basic test 1.Enable All PON MAC PON NNI port enable/disable. 
+    [Tags]  Bal_Component 
 
     Disable All Tx Port
 
@@ -59,13 +74,16 @@ Test Basic Component
     Enable Port  ${PON_PORT_ID}
     Test NNI Port Enable
 
+Test ONU Range
+    [Documentation]  ONU Ranging Test 
+    [Tags]  ONU Range 
+
+    #ONU RANGE
     ${ONU_ID_RANGE}=  Run Keyword If  '${PON_TYPE}' == 'GPON' 
     \    ...    set variable   ${150}
     \    ...    ELSE          
     \    ...    set variable  ${255} 
 
-
-    #ONU RANGE
     : FOR  ${id}  IN RANGE   1  ${ONU_ID_RANGE}  50 
     \  Sleep  7s
     \  Test Active ONU  ${id}  ${SPECIFIC_ID}  ${SPECIFIC_NUM}  ${PON_PORT_ID}  ONUID_IN_RANGE
@@ -90,6 +108,10 @@ Test Basic Component
     Should Be Equal As Integers  ${item_count}  1 
     Sleep  5s
 
+Test US DS Flow Add 
+    [Documentation]  Flow Add/Remove 
+    [Tags]  US DS Flow Add/Remove 
+
     : FOR  ${flow_id}  IN RANGE   0  2047  500 
     \  Sleep  1s
     \  Test Flow Add  1  ${flow_id}  ${PON_PORT_ID}  ONUID_IN_RANGE
@@ -99,13 +121,11 @@ Test Basic Component
     Test Flow Add  1  2048  ${PON_PORT_ID}  NOTONUID_IN_RANGE
     Test Flow Add  1  16  ${PON_PORT_ID}  ONUID_IN_RANGE
 
+Test omci send 
+    [Documentation]  Send omci raw data
+    [Tags]  omci send 
     Test Send Omci  1  ${PON_PORT_ID} 
-
     Enable All Tx Port
-
-
-
-
 
 Test Bal Enable 
     [Documentation]  Enable Bal 
