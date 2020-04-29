@@ -70,8 +70,11 @@ Test Bal Component
     \    ...          Log to console  "####### XGSPON TESTING ######" 
 
     Test Bal Enable  
+    Sleep  5s
     Test Port Present  ${PON_PORT_ID} 
+    Sleep  5s
     Enable Port  ${PON_PORT_ID}
+    Sleep  5s
     Test NNI Port Enable
 
 Test ONU Range
