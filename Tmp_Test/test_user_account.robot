@@ -1,8 +1,8 @@
 *** Settings ***
 Documentation    Test Redfish user account.
 
-Resource         ../../lib/resource.robot
-Resource         ../../lib/bmc_redfish_resource.robot
+Resource         ../lib/resource.robot
+Resource         ../lib/bmc_redfish_resource.robot
 
 *** Variables ***
 
@@ -149,13 +149,11 @@ Verify AccountService_ReadOnlyUser_Cannot_POST_PATCH
     ...  ResetType=GracefulRestart 
     Redfish.Post  /redfish/v1/Systems/1/Actions/ComputerSystem.Reset  body=&{payload}
     ...  valid_status_codes=[${HTTP_UNAUTHORIZED}]
-# Should not able to create user
-#    ${payload}=  Evaluate  json.loads($TEST_USER_BODY)    json
-#    Redfish.Post  /redfish/v1/redfish/v1/AccountService/Accounts/  body=&{payload}
-#    ...  valid_status_codes=[${HTTP_OK]
-#    Sleep  10s
-#    Redfish.Post  /redfish/v1/redfish/v1/AccountService/Accounts/U1  body=&{payload}
-#    ...  valid_status_codes=[${HTTP_OK]
+    Redfish Create User  ${TEST_RO_UserName}  ${TEST_RO_Pwd}  ${RO_ROLE}  ${False}  ${True}
+
+    ${role_config}=  Redfish_Utils.Get Attribute
+    ...  /redfish/v1/AccountService/Accounts/${TEST_RO_UserName}  RoleId
+    Should Not Be Equal  ${RO_ROLE}  ${role_config}
 
     Redfish.Login  
     Redfish.Delete  /redfish/v1/AccountService/Accounts/${RO_UserName}
@@ -174,13 +172,9 @@ Verify AccountService_Operator_Can_POST_PATCH
     ${resp}=  Redfish.Patch  /redfish/v1/EthernetSwitches/1/Ports/1  body=${payload}
     Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
 
-# Should not able to create user
-#    ${payload}=  Evaluate  json.loads($TEST_USER_BODY)    json
-#    Redfish.Post  /redfish/v1/redfish/v1/AccountService/Accounts/  body=&{payload}
-#    ...  valid_status_codes=[${HTTP_OK]
-#    Sleep  10s
-#    Redfish.Post  /redfish/v1/redfish/v1/AccountService/Accounts/U1  body=&{payload}
-#    ...  valid_status_codes=[${HTTP_OK]
+    ${role_config}=  Redfish_Utils.Get Attribute
+    ...  /redfish/v1/AccountService/Accounts/${TEST_RO_UserName}  RoleId
+    Should Not Be Equal  ${RO_ROLE}  ${role_config}
 
     ${payload}=  Create Dictionary
     ...  ResetType=GracefulRestart 
@@ -195,6 +189,7 @@ Verify AccountService_Operator_Can_POST_PATCH
 
 
 *** Keywords ***
+
 Redfish Create User
     [Documentation]  Redfish create user.
     [Arguments]   ${username}  ${password}  ${role_id}  ${locked}  ${enabled}
