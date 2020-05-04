@@ -1,8 +1,8 @@
 *** Settings ***
 Documentation    Test Redfish user account.
 
-Resource         ../../lib/resource.robot
-Resource         ../../lib/bmc_redfish_resource.robot
+Resource         ../lib/resource.robot
+Resource         ../lib/bmc_redfish_resource.robot
 
 *** Variables ***
 
