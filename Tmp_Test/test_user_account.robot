@@ -221,7 +221,8 @@ Verify AccountService_OPUser_Cannot_POST_PATCH
     ...  valid_status_codes=[${HTTP_OK}]
     Sleep  180s
     # Wait device ready
-
+    
+    Redfish.Logout
     Redfish.Login   
     Redfish.Delete  /redfish/v1/AccountService/Accounts/${OP_UserName}
     Redfish.Delete  /redfish/v1/AccountService/Accounts/${TEST_RO_UserName}
