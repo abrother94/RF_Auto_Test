@@ -1,8 +1,8 @@
 *** Settings ***
 Documentation    Test Redfish user account.
 
-Resource         ../lib/resource.robot
-Resource         ../lib/bmc_redfish_resource.robot
+Resource         ../../lib/resource.robot
+Resource         ../../lib/bmc_redfish_resource.robot
 
 *** Variables ***
 
@@ -214,16 +214,15 @@ Verify AccountService_OPUser_Cannot_POST_PATCH
     ...  valid_status_codes=[${HTTP_UNAUTHORIZED}]
 
 
-    # Op can reset device
-    ${payload}=  Create Dictionary
-    ...  ResetType=GracefulRestart 
-    Redfish.Post  /redfish/v1/Systems/1/Actions/ComputerSystem.Reset  body=&{payload}
-    ...  valid_status_codes=[${HTTP_OK}]
-    Sleep  180s
-    # Wait device ready
-    
-    Redfish.Logout
-    Redfish.Login   
+#    # Op can reset device
+#    ${payload}=  Create Dictionary
+#    ...  ResetType=GracefulRestart 
+#    Redfish.Post  /redfish/v1/Systems/1/Actions/ComputerSystem.Reset  body=&{payload}
+#    ...  valid_status_codes=[${HTTP_OK}]
+#    Sleep  180s
+#    # Wait device ready
+#    
+#    Redfish.Login   
     Redfish.Delete  /redfish/v1/AccountService/Accounts/${OP_UserName}
     Redfish.Delete  /redfish/v1/AccountService/Accounts/${TEST_RO_UserName}
     Redfish.Logout
