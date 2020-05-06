@@ -41,9 +41,31 @@ Verify AccountService Available
     [Documentation]  Verify Redfish account service is available.
     [Tags]  Verify_AccountService_Available
 
-    Redfish.Login  ${UserName}  ${Pwd} 
+    Redfish.Login  
     ${resp} =  Redfish_utils.Get Attribute  /redfish/v1/AccountService  ServiceEnabled
     Should Be Equal As Strings  ${resp}  ${True}
+
+Verify AccountService_session_timeout
+    [Documentation]  Verify Redfish session timeout 
+    [Tags]  Verify_AccountService_session_timeout
+
+    Redfish.Login  
+
+    ${payload}=  Create Dictionary
+    ...  ServiceEnabled=${True}  SessionTimeout=${6}
+    Redfish.Post  /redfish/v1/SessionService/  body=&{payload}
+    ...  valid_status_codes=[${HTTP_OK}]
+
+    Sleep  10s
+
+    ${resp}=  Redfish.Get  /redfish/v1/Chassis/
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_UNAUTHORIZED}
+
+    Redfish.Login  
+    ${payload}=  Create Dictionary
+    ...  ServiceEnabled=${True}  SessionTimeout=${60}
+    Redfish.Post  /redfish/v1/SessionService/  body=&{payload}
+    ...  valid_status_codes=[${HTTP_OK}]
 
 Redfish Create and Verify Users
     [Documentation]  Create Redfish users with various roles.
@@ -102,34 +124,34 @@ Verify Create and Patch parameters
     # username    # username     # password    # role_id       #locked    # enabled 
       nameadmin    admin_user     TestPwd123  Administrator    ${False}   ${True}
 
-#Verify Redfish User Persistence After Reboot
-#    [Documentation]  Verify Redfish user persistence after reboot.
-#    [Tags]  Verify_Redfish_User_Persistence_After_Reboot
-#    # Create Redfish users.
-#
-#    Redfish.Login  ${UserName}  ${Pwd} 
-#    Redfish Create User  newname_1    admin_user_12     TestPwd123  Administrator       ${False}   ${True}
-#    Redfish Create User  newname_2    admin_user_13     TestPwd123  ReadOnlyUser        ${False}   ${True}
-#    Redfish Create User  newname_3    operator_user_14  TestPwd123  Operator            ${False}   ${True}
-#
-#    # Reboot Device 
-#    Redfish GracefulRestart
-#
-#    # Wait device ready
-#    Sleep  180s
-#
-#    # Verify users after reboot.
-#
-#    Redfish.Login  ${UserName}  ${Pwd} 
-#    Redfish Verify User   newname_1   admin_user_12     TestPwd123  Administrator  ${False}  ${True}
-#    Redfish Verify User   newname_2   admin_user_13     TestPwd123  ReadOnlyUser   ${False}  ${True}
-#    Redfish Verify User   newname_3   operator_user_14  TestPwd123  Operator       ${False}  ${True}
-#
-#    # Delete created users.
-#    Redfish.Delete  /redfish/v1/AccountService/Accounts/admin_user_12
-#    Redfish.Delete  /redfish/v1/AccountService/Accounts/admin_user_13
-#    Redfish.Delete  /redfish/v1/AccountService/Accounts/operator_user_14
-#    Redfish.Logout
+Verify Redfish User Persistence After Reboot
+    [Documentation]  Verify Redfish user persistence after reboot.
+    [Tags]  Verify_Redfish_User_Persistence_After_Reboot
+    # Create Redfish users.
+
+    Redfish.Login  ${UserName}  ${Pwd} 
+    Redfish Create User  newname_1    admin_user_12     TestPwd123  Administrator       ${False}   ${True}
+    Redfish Create User  newname_2    admin_user_13     TestPwd123  ReadOnlyUser        ${False}   ${True}
+    Redfish Create User  newname_3    operator_user_14  TestPwd123  Operator            ${False}   ${True}
+
+    # Reboot Device 
+    Redfish GracefulRestart
+
+    # Wait device ready
+    Sleep  180s
+
+    # Verify users after reboot.
+
+    Redfish.Login  ${UserName}  ${Pwd} 
+    Redfish Verify User   newname_1   admin_user_12     TestPwd123  Administrator  ${False}  ${True}
+    Redfish Verify User   newname_2   admin_user_13     TestPwd123  ReadOnlyUser   ${False}  ${True}
+    Redfish Verify User   newname_3   operator_user_14  TestPwd123  Operator       ${False}  ${True}
+
+    # Delete created users.
+    Redfish.Delete  /redfish/v1/AccountService/Accounts/admin_user_12
+    Redfish.Delete  /redfish/v1/AccountService/Accounts/admin_user_13
+    Redfish.Delete  /redfish/v1/AccountService/Accounts/operator_user_14
+    Redfish.Logout
 
 Verify AccountService_ReadOnlyUser
     [Documentation]  Verify Redfish ReadOnlyUser account can get major service 
@@ -341,15 +363,15 @@ Verify AccountService_OPUser_Cannot_POST_PATCH
     ...  valid_status_codes=[${HTTP_UNAUTHORIZED}]
 
 
-#    # Op can reset device
-#    ${payload}=  Create Dictionary
-#    ...  ResetType=GracefulRestart 
-#    Redfish.Post  /redfish/v1/Systems/1/Actions/ComputerSystem.Reset  body=&{payload}
-#    ...  valid_status_codes=[${HTTP_OK}]
-#    Sleep  180s
-#    # Wait device ready
+    # Op can reset device
+    ${payload}=  Create Dictionary
+    ...  ResetType=GracefulRestart 
+    Redfish.Post  /redfish/v1/Systems/1/Actions/ComputerSystem.Reset  body=&{payload}
+    ...  valid_status_codes=[${HTTP_OK}]
+    Sleep  180s
+    # Wait device ready
     
-    Redfish.Logout
+#    Redfish.Logout # if not reboot , need logout then login again
 
     Redfish.Login   
     Redfish.Delete  /redfish/v1/AccountService/Accounts/${OP_UserName}
