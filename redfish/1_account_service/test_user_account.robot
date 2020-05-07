@@ -293,6 +293,18 @@ Verify AccountService_ReadOnlyUser_Cannot_POST_PATCH
     Redfish.Patch  /redfish/v1/AccountService/Accounts/${RO_UserName}  body=&{payload}
     ...  valid_status_codes=[${HTTP_OK}]
 
+#   ReadOnlyUser cannot patch its own role 
+    ${payload}=  Create Dictionary
+    ...  RoleId=Administrator
+    Redfish.Patch  /redfish/v1/AccountService/Accounts/${RO_UserName}  body=&{payload}
+    ...  valid_status_codes=[${HTTP_UNAUTHORIZED}]
+
+#   ReadOnlyUser cannot patch its own role with other parameters
+    ${payload}=  Create Dictionary
+    ...  RoleId=Administrator  Password=P2
+    Redfish.Patch  /redfish/v1/AccountService/Accounts/${RO_UserName}  body=&{payload}
+    ...  valid_status_codes=[${HTTP_UNAUTHORIZED}]
+
 #   ReadOnlyUser can patch its own only pasword  
     ${payload}=  Create Dictionary
     ...  Password=NewPasswordOP 
@@ -301,12 +313,6 @@ Verify AccountService_ReadOnlyUser_Cannot_POST_PATCH
 #
     Redfish.Logout
     Redfish.Login  ${RO_UserName}  NewPasswordOP 
-
-#   ReadOnlyUser cannot patch its own role 
-    ${payload}=  Create Dictionary
-    ...  RoleId=Administrator
-    Redfish.Patch  /redfish/v1/AccountService/Accounts/${RO_UserName}  body=&{payload}
-    ...  valid_status_codes=[${HTTP_UNAUTHORIZED}]
 
 #   ReadOnlyUser can't patch other users pasword
     ${payload}=  Evaluate  json.loads($PATCH_TEST_PWD_BODY)    json 
@@ -356,12 +362,16 @@ Verify AccountService_OPUser_Cannot_POST_PATCH
     Redfish.Patch  /redfish/v1/AccountService/Accounts/${OP_UserName}  body=&{payload}
     ...  valid_status_codes=[${HTTP_UNAUTHORIZED}]
 
+#   ReadOnlyUser cannot patch its own role with other parameters
+    ${payload}=  Create Dictionary
+    ...  RoleId=Administrator  Password=P2
+    Redfish.Patch  /redfish/v1/AccountService/Accounts/${OP_UserName}  body=&{payload}
+    ...  valid_status_codes=[${HTTP_UNAUTHORIZED}]
 
 #   ReadOnlyUser can't patch other users pasword
     ${payload}=  Evaluate  json.loads($PATCH_TEST_PWD_BODY)    json 
     Redfish.Patch  /redfish/v1/AccountService/Accounts/${TEST_RO_UserName}  body=&{payload}
     ...  valid_status_codes=[${HTTP_UNAUTHORIZED}]
-
 
     # Op can reset device
     ${payload}=  Create Dictionary
