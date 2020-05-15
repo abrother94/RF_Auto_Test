@@ -165,6 +165,15 @@ Verify AccountService_ReadOnlyUser
     Redfish.Login  ${RO_UserName}  ${RO_Pwd} 
     Sleep  1s
 
+    ${resp}=  Redfish.Get   /redfish/v1/
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+    ${resp}=  Redfish.Get   /redfish/
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+    ${resp}=  Redfish.Get   /
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
     ${resp}=  Redfish.Get   /redfish/v1/EthernetSwitches/1
     Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
 
