@@ -134,7 +134,7 @@ Test Bal Enable
     [Documentation]  Enable Bal 
     [Tags]  Verify_Bal_Enable
 
-    : FOR  ${i}  IN RANGE   1   30 
+    : FOR  ${i}  IN RANGE   1   80 
     \  ${result} =  Test Wait Bal Enable 
     \  Log to console  "################### resule[${result}] ###################" 
     \  EXIT FOR LOOP IF  '${result}' == 'up' 
@@ -145,7 +145,7 @@ Test Bal Enable
     ${payload}=  Evaluate  json.loads($OPT_ENABLE)    json 
     ${resp}=  Redfish.Patch  /redfish/v1/Olt  body=${payload}
 
-    : FOR  ${i}  IN RANGE   1   30 
+    : FOR  ${i}  IN RANGE   1   60 
     \  ${result} =  Test Wait BalOpt Enable 
     \  Log to console  "################### resule[${result}] ###################" 
     \  EXIT FOR LOOP IF  ${result}
