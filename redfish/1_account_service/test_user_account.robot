@@ -432,6 +432,11 @@ Redfish Enable SessionService
     Redfish.Post  /redfish/v1/SessionService/  body=&{payload}
     ...  valid_status_codes=[${HTTP_OK}]
 
+    ${payload}=  Create Dictionary
+    ...  SessionTimeout=${700}
+    Redfish.Patch  /redfish/v1/SessionService/  body=&{payload}
+    ...  valid_status_codes=[${HTTP_OK}]
+
 Redfish Create User
     [Documentation]  Redfish create user.
     [Arguments]   ${name}  ${username}  ${password}  ${role_id}  ${locked}  ${enabled}

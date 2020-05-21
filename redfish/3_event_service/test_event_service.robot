@@ -11,9 +11,21 @@ Test Teardown    Test Teardown Execution
 *** Variables ***
 ${EVENT_ALERT}  { "Name": "This is Alert Subscription event test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS", "Protocol": "Redfish", "EventTypes": [ "Alert" ] }
 
+${PATCH_EVENT_ALERT}  { "Name": "This is Alert Subscription event patch test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS PATCH TEST FROM AUTO TEST SUBS" }
+
+${PATCH_EVENT_ALERT_NAME}  { "Name": "This is Alert Subscription event patch test name"}
+
 ${EVENT_RESOURCEADD}  { "Name": "This is ResourceAdded Subscription event test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS", "Protocol": "Redfish", "EventTypes": [ "ResourceAdded" ] }
 
+${PATCH_EVENT_RESOURCEADD}  { "Name": "This is ResourceAdded Subscription event patch test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS PATCH  TEST FROM AUTO TEST SUBS" }
+
+${PATCH_EVENT_RESOURCEADD_DES}  { "Destination": "https://${LISTENER_HOST}ONLY"}
+
 ${EVENT_RESOURCEREMOVE}  { "Name": "This is ResourceRemoved Subscription event test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS", "Protocol": "Redfish", "EventTypes": [ "ResourceRemoved" ] }
+
+${PATCH_EVENT_RESOURCEREMOVE}  { "Name": "This is ResourceRemoved Subscription event patch test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS PATCH TEST FROM AUTO TEST SUBS"}
+
+${PATCH_EVENT_RESOURCEREMOVE_CONTEXT}  { "Context": "THIS IS PATCH TEST FROM AUTO TEST SUBS ONLY"}
 
 ** Test Cases **
 
@@ -21,6 +33,11 @@ Verify Redfish Admin Add Event
     [Documentation]  Subscribe Event
     [Tags]  Admin Redfish_Add_Event 
     Redfish Admin Add Event 
+
+Verify Redfish Admin Patch Event
+    [Documentation]  Subscribe Event
+    [Tags]  Admin Redfish_Patch_Event 
+    Redfish Admin Patch Event 
 
 Verify Redfish Admin Del Event
     [Documentation]  Del Subscribed Event
@@ -84,6 +101,35 @@ Redfish Admin Add Event
     ${payload}=  Evaluate  json.loads($EVENT_RESOURCEREMOVE)    json 
     ${resp}=  Redfish.Post  /redfish/v1/EventService/Subscriptions/  body=${payload}
     Should Be Equal As Strings  ${resp.status}  ${HTTP_CREATED}
+
+
+Redfish Admin Patch Event
+    [Documentation]  Admin can patch added Subscribe Event 
+
+    ${payload}=  Evaluate  json.loads($PATCH_EVENT_ALERT)    json 
+    ${resp}=  Redfish.Patch  /redfish/v1/EventService/Subscriptions/1  body=${payload}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+    ${payload}=  Evaluate  json.loads($PATCH_EVENT_RESOURCEADD)    json 
+    ${resp}=  Redfish.Patch  /redfish/v1/EventService/Subscriptions/2  body=${payload}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+    ${payload}=  Evaluate  json.loads($PATCH_EVENT_RESOURCEREMOVE)    json 
+    ${resp}=  Redfish.Patch  /redfish/v1/EventService/Subscriptions/3  body=${payload}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+    ${payload}=  Evaluate  json.loads($PATCH_EVENT_ALERT_NAME)    json 
+    ${resp}=  Redfish.Patch  /redfish/v1/EventService/Subscriptions/1  body=${payload}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+    ${payload}=  Evaluate  json.loads($PATCH_EVENT_RESOURCEADD_DES)    json 
+    ${resp}=  Redfish.Patch  /redfish/v1/EventService/Subscriptions/2  body=${payload}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+    ${payload}=  Evaluate  json.loads($PATCH_EVENT_RESOURCEREMOVE_CONTEXT)    json 
+    ${resp}=  Redfish.Patch  /redfish/v1/EventService/Subscriptions/3  body=${payload}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
 
 Redfish Admin Del Event
     [Documentation]  Admin can Del Subscribed Event 
