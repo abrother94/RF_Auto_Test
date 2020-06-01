@@ -69,6 +69,7 @@ Test Bal Component
     \    ...    ELSE          
     \    ...          Log to console  "####### XGSPON TESTING ######" 
 
+    Enable All Tx Port
     Test Bal Enable  
     Sleep  5s
     Test Port Present  ${PON_PORT_ID} 
