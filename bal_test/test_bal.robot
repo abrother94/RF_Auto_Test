@@ -10,8 +10,8 @@ Test Teardown    Test Teardown Execution
 
 *** Variables ***
 
-${OP_DOWN}  {"OperationalState": "Down"} 
-${OP_UP}  {"OperationalState": "Up"} 
+${OP_DOWN}  {"TxDisabledState": true} 
+${OP_UP}  {"TxDisabledState": false} 
 ${SESSION_DISABLE}  {"ServiceEnabled":false,"SessionTimeout":60}
 
 *** Test Cases ***
@@ -61,15 +61,16 @@ Test Bal Component
     [Documentation]  Do basic test 1.Enable All PON MAC PON NNI port enable/disable. 
     [Tags]  Bal_Component 
 
-    Disable All Tx Port
+    #Disable All Tx Port
 
-    #PON_TYPE  SPECIFIC_ID  SPECIFIC_NUM  PON_PORT_ID
+    Log to console  "####### XGSPON TESTING ######" ${PON_TYPE} 
+
+#    #PON_TYPE  SPECIFIC_ID  SPECIFIC_NUM  PON_PORT_ID
     Run Keyword If  '${PON_TYPE}' == 'GPON' 
-    \    ...          Log to console  "####### GPON TESTING ######" 
-    \    ...    ELSE          
-    \    ...          Log to console  "####### XGSPON TESTING ######" 
+    ...          Log to console  "####### GPON TESTING ######" 
+    ...    ELSE          
+    ...          Log to console  "####### XGSPON TESTING ######" 
 
-    Enable All Tx Port
     Test Bal Enable  
     Sleep  5s
     Test Port Present  ${PON_PORT_ID} 
@@ -84,15 +85,16 @@ Test ONU Range
 
     #ONU RANGE
     ${ONU_ID_RANGE}=  Run Keyword If  '${PON_TYPE}' == 'GPON' 
-    \    ...    set variable   ${150}
-    \    ...    ELSE          
-    \    ...    set variable  ${255} 
+    ...    set variable   ${150}
+    ...    ELSE          
+    ...    set variable  ${255} 
 
-    : FOR  ${id}  IN RANGE   1  ${ONU_ID_RANGE}  50 
-    \  Sleep  7s
-    \  Test Active ONU  ${id}  ${SPECIFIC_ID}  ${SPECIFIC_NUM}  ${PON_PORT_ID}  ONUID_IN_RANGE
-    \  Sleep  7s
-    \  Test DeActive ONU  ${id}  ${PON_PORT_ID}
+    FOR  ${id}  IN RANGE   1  ${ONU_ID_RANGE}  50 
+      Sleep  7s
+      Test Active ONU  ${id}  ${SPECIFIC_ID}  ${SPECIFIC_NUM}  ${PON_PORT_ID}  ONUID_IN_RANGE
+      Sleep  7s
+      Test DeActive ONU  ${id}  ${PON_PORT_ID}
+    END
 
     Test Active ONU  256  ${SPECIFIC_ID}  ${SPECIFIC_NUM}  ${PON_PORT_ID}  NOTONUID_IN_RANGE
     Test Port Present  ${PON_PORT_ID} 
@@ -116,11 +118,12 @@ Test US DS Flow Add
     [Documentation]  Flow Add/Remove 
     [Tags]  US DS Flow Add/Remove 
 
-    : FOR  ${flow_id}  IN RANGE   0  2047  500 
-    \  Sleep  1s
-    \  Test Flow Add  1  ${flow_id}  ${PON_PORT_ID}  ONUID_IN_RANGE
-    \  Sleep  1s
-    \  Test Flow Del  ${flow_id} 
+    FOR  ${flow_id}  IN RANGE   0  2047  500 
+      Sleep  1s
+      Test Flow Add  1  ${flow_id}  ${PON_PORT_ID}  ONUID_IN_RANGE
+      Sleep  1s
+      Test Flow Del  ${flow_id} 
+    END
 
     Test Flow Add  1  2048  ${PON_PORT_ID}  NOTONUID_IN_RANGE
     Test Flow Add  1  16  ${PON_PORT_ID}  ONUID_IN_RANGE
@@ -135,10 +138,11 @@ Test Bal Enable
     [Documentation]  Enable Bal 
     [Tags]  Verify_Bal_Enable
 
-    : FOR  ${i}  IN RANGE   1   80 
-    \  ${result} =  Test Wait Bal Enable 
-    \  Log to console  "################### resule[${result}] ###################" 
-    \  EXIT FOR LOOP IF  '${result}' == 'up' 
+    FOR  ${i}  IN RANGE   1   80 
+     ${result} =  Test Wait Bal Enable 
+     Log to console  "################### resule[${result}] ###################" 
+     EXIT FOR LOOP IF  '${result}' == 'up' 
+    END
 
     # Check if BAL is ready or not
     Should Be Equal As Strings  ${result}  up 
@@ -146,10 +150,12 @@ Test Bal Enable
     ${payload}=  Evaluate  json.loads($OPT_ENABLE)    json 
     ${resp}=  Redfish.Patch  /redfish/v1/Olt  body=${payload}
 
-    : FOR  ${i}  IN RANGE   1   60 
-    \  ${result} =  Test Wait BalOpt Enable 
-    \  Log to console  "################### resule[${result}] ###################" 
-    \  EXIT FOR LOOP IF  ${result}
+    FOR  ${i}  IN RANGE   1   60 
+        ${result} =  Test Wait BalOpt Enable 
+        Log to console  "################### resule[${result}] ###################" 
+        EXIT FOR LOOP IF  ${result}
+    END
+
 
     # Check Opt state is true or false
     Should Be True     ${result}
@@ -166,11 +172,11 @@ Test Wait Bal Enable
     ${BAL_STATE} =  Set Variable  ${resp.dict['BalState']}
 
     Run Keyword If  '${BAL_STATE}' == 'up' 
-    \    ...          Log to console  "####### Up ######" 
-    \    ...          ${bal_state} =  "up" 
-    \    ...    ELSE          
-    \    ...          Log to console  "####### Down ######" 
-    \    ...          ${bal_state} =  "down" 
+    ...          Log to console  "####### Up ######" 
+    ...          ${bal_state} =  "up" 
+    ...    ELSE          
+    ...          Log to console  "####### Down ######" 
+    ...          ${bal_state} =  "down" 
     Sleep  1s
 
 Test Wait BalOpt Enable 
@@ -185,9 +191,10 @@ Test Wait BalOpt Enable
     Log to console  "####### Opt ${bal_opt_state} ######" 
 
     Run Keyword If  ${bal_opt_state}  
-    \    ...          Log to console  "####### Opt Up ######" 
-    \    ...    ELSE          
-    \    ...          Log to console  "####### Opt Down ######" 
+    ...          Log to console  "####### Opt Up ######" 
+    ...    ELSE          
+    ...          Log to console  "####### Opt Down ######" 
+
     Sleep  1s
 
 Test NNI Port Enable
@@ -202,9 +209,9 @@ Test NNI Port Enable
     Log to console  "####### num ${item_count} ######" 
 
     ${NNI_PORT}=  Run Keyword If  '${PON_TYPE}' == 'GPON' 
-    \    ...    set variable   ${65}
-    \    ...    ELSE          
-    \    ...    set variable  ${17} 
+    ...    set variable   ${65}
+    ...    ELSE          
+    ...    set variable  ${17} 
 
     Test Port Present  ${NNI_PORT}
     Enable Port  ${NNI_PORT}
@@ -251,8 +258,9 @@ Disable All Tx Port
     ${item_count}  Get Length  ${resp.dict['Members']}
     Log to console  "####### Disable All Pon Port ${item_count} ######" 
 
-    :FOR    ${ID}  IN RANGE   1    ${item_count} 
-    \        Tx Disable Down  ${ID}
+    FOR    ${ID}  IN RANGE   1    ${item_count} 
+        Admin Down  ${ID}
+    END
 
 Enable All Tx Port
     [Documentation]  Enable all port function 
@@ -262,10 +270,11 @@ Enable All Tx Port
     ${item_count}  Get Length  ${resp.dict['Members']}
     Log to console  "####### Enable All Pon Port Tx ${item_count} ######" 
 
-    :FOR    ${ID}  IN RANGE   1    ${item_count} 
-    \        Tx Disable Up  ${ID}
+    FOR    ${ID}  IN RANGE   1    ${item_count} 
+           Admin Up  ${ID}
+    END
 
-Tx Disable Down
+Admin Down
     [Documentation]  Test SFP port tx disable down function 
     [Tags]  Test tx_disable down 
     [Arguments]   ${ID} 
@@ -277,15 +286,15 @@ Tx Disable Down
     ${PORT_ID} =  Set Variable  ${resp.dict['PortId']}
     Log to console              ${PORT_ENABLE}
     Log to console              ${PortId}
-    Log to console              ${resp.dict['OperationalState']}
+    Log to console              ${resp.dict['AdministrativeState']}
 
     Run Keyword If  '${PORT_ENABLE}' == 'Enabled' 
-    \    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port'
-    \    ...        Test Tx Op Down   ${ID} 
-    \    ...    ELSE          
-    \    ...          Log to console  "####### Disabled ######" 
+    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port'
+    ...        Test Tx Admin Down   ${ID} 
+    ...    ELSE          
+    ...        Log to console  "####### Disabled ######" 
 
-Tx Disable Up 
+Admin Up 
     [Documentation]  Test SFP port tx disable Up function 
     [Tags]  Test tx_disable up 
     [Arguments]   ${ID} 
@@ -297,13 +306,13 @@ Tx Disable Up
     ${PORT_ID} =  Set Variable  ${resp.dict['PortId']}
     Log to console              ${PORT_ENABLE}
     Log to console              ${PortId}
-    Log to console              ${resp.dict['OperationalState']}
+    Log to console              ${resp.dict['AdministrativeState']}
 
     Run Keyword If  '${PORT_ENABLE}' == 'Enabled' 
-    \    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port'
-    \    ...        Test Tx Op Up   ${ID} 
-    \    ...    ELSE          
-    \    ...          Log to console  "####### Disable ######" 
+    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port'
+    ...        Test Tx Admin Up   ${ID} 
+    ...    ELSE          
+    ...        Log to console  "####### Disable ######" 
 
 Disable Port
     [Documentation]  Enable port function 
@@ -321,7 +330,7 @@ Disable Port
 
     Should Be Equal As Strings  '${ADM_STAT}'  'Down'
 
-Test Tx Op Down 
+Test Tx Admin Down 
     [Documentation]  Test SFP port tx disable function 
     [Tags]  Test tx_disable 
     [Arguments]   ${ID} 
@@ -329,7 +338,7 @@ Test Tx Op Down
     ${payload}=  Evaluate  json.loads($OP_DOWN)    json 
     Redfish.Patch  /redfish/v1/EthernetSwitches/1/Ports/${ID}  body=${payload}
 
-Test Tx Op Up 
+Test Tx Admin Up 
     [Documentation]  Test SFP port tx disable function 
     [Tags]  Test tx_disable 
     [Arguments]   ${ID} 
@@ -355,11 +364,11 @@ Test Active ONU
     ${resp}=  Redfish.Post  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs  body=${payload}
 
     Run Keyword If  '${ONUID_IN_RANGE}' == 'ONUID_IN_RANGE' 
-    \    ...          Should Be Equal As Strings  ${resp.status}  ${HTTP_CREATED} 
-    \    ...    ELSE          
-    \    ...          Should Not Be Equal As Strings  ${resp.status}  ${HTTP_CREATED}
+    ...          Should Be Equal As Strings  ${resp.status}  ${HTTP_CREATED} 
+    ...    ELSE          
+    ...          Should Not Be Equal As Strings  ${resp.status}  ${HTTP_CREATED}
 
-    Sleep  6s
+    Sleep  10s
 
     ${resp}=  Redfish.Get  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs 
     Log to console  "####### onu res ${resp} ######" 
@@ -367,9 +376,9 @@ Test Active ONU
     Log to console  "####### Onu num ${item_count} ######" 
 
     Run Keyword If  '${ONUID_IN_RANGE}' == 'ONUID_IN_RANGE' 
-    \    ...          Should Be Equal As Integers  ${item_count}  1 
-    \    ...    ELSE          
-    \    ...          Should Be Equal As Integers  ${item_count}  0 
+    ...          Should Be Equal As Integers  ${item_count}  1 
+    ...    ELSE          
+    ...          Should Be Equal As Integers  ${item_count}  0 
 
 Test DeActive ONU
     [Documentation]  Test DeActive ONU function 
@@ -377,12 +386,13 @@ Test DeActive ONU
     [Arguments]  ${ONU_ID}  ${PON_PORT_ID} 
     Log to console  "####### Deactive onu ${ONU_ID} ######" 
 
-    :FOR    ${j}    IN RANGE    5 
-    \    Exit For Loop If    ${j} == 4
-    \    ${resp}=  Redfish.Delete  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs/${ONU_ID}
-    \    Exit For Loop If    ${resp.status} == ${HTTP_OK} 
-    \    Log to console  "retry deactive ${j}"
-    \    Sleep  2s 
+    FOR    ${j}    IN RANGE    5 
+        Exit For Loop If    ${j} == 4
+        ${resp}=  Redfish.Delete  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs/${ONU_ID}
+        Exit For Loop If    ${resp.status} == ${HTTP_OK} 
+        Log to console  "retry deactive ${j}"
+        Sleep  2s 
+    END
 
     Should Be Equal As Strings  ${resp.status}  ${HTTP_OK} 
 
@@ -404,9 +414,9 @@ Test Flow Add
     ${resp}=  Redfish.Post  /redfish/v1/Olt/Flow/  body=${payload}
 
     Run Keyword If  '${ONUID_IN_RANGE}' == 'ONUID_IN_RANGE' 
-    \    ...          Should Be Equal As Strings  ${resp.status}  ${HTTP_OK} 
-    \    ...    ELSE          
-    \    ...          Should Not Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+    ...          Should Be Equal As Strings  ${resp.status}  ${HTTP_OK} 
+    ...    ELSE          
+    ...          Should Not Be Equal As Strings  ${resp.status}  ${HTTP_OK}
 
 
     ${JSTRING}=    catenate
@@ -423,9 +433,9 @@ Test Flow Add
     ${resp}=  Redfish.Post  /redfish/v1/Olt/Flow/  body=${payload}
 
     Run Keyword If  '${ONUID_IN_RANGE}' == 'ONUID_IN_RANGE' 
-    \    ...          Should Be Equal As Strings  ${resp.status}  ${HTTP_OK} 
-    \    ...    ELSE          
-    \    ...          Should Not Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+    ...          Should Be Equal As Strings  ${resp.status}  ${HTTP_OK} 
+    ...    ELSE          
+    ...          Should Not Be Equal As Strings  ${resp.status}  ${HTTP_OK}
 
 Test Flow Del 
     [Documentation]  Test Flow Del 
@@ -444,12 +454,11 @@ Test Send Omci
     [Arguments]  ${ONU_ID}  ${PON_PORT_ID}
 
     ${payload_}=  Evaluate  json.loads($OMCI_RAW)    json 
-    ${length}=  get length  ${payload_["raw_data"]
-    Log to console  ====================length ${length} ================
 
-    : FOR  ${i}  IN RANGE   0   171 
-    \  Log to console  "################### raw[${payload_["raw_data"][${i}]}] ###################" 
-    \  Sleep  0.3s
-    \  ${resp}=  Redfish.Post  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs/${ONU_ID}/Omci  body=${payload_["raw_data"][${i}]}
+    FOR  ${i}  IN RANGE   0   171 
+      Log to console  "################### raw[${payload_["raw_data"][${i}]}] ###################" 
+      Sleep  0.3s
+      ${resp}=  Redfish.Post  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs/${ONU_ID}/Omci  body=${payload_["raw_data"][${i}]}
+    END
 
 

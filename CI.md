@@ -53,7 +53,7 @@
 
 * Create 2 Slave Agents.  
 
-   Add slave node 1 172.17.10.65 for building onlp and redfish or related SDK.
+   Add slave node 1 172.17.10.65 for building ecrf_pal and redfish or related SDK.
 
    ![Screenshot](img/mgt_node_1.png) 
    

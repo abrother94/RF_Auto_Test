@@ -25,7 +25,8 @@ Install the packages and it's dependencies via `pip3`
     $ sudo pip3 install redfish
     $ sudo pip3 install robotframework-sshlibrary
     $ sudo pip3 install robotframework-scplibrary
-    $ sudo pip3 install beautifulsoup4>=4.6.0
+    $ sudo pip3 install beautifulsoup4==4.6.0
+    $ sudo pip3 install jsonschema
     $ sudo pip3 install lxml
     ```
 
@@ -33,81 +34,42 @@ Install the packages and it's dependencies via `pip3`
 
 `redfish/`:  Test cases for DMTF Redfish-related feature supported.
 
-`redfish_eit/`: Test cases for ONLP EIT test.
+`redfish_eit/`: Test cases for ECRF_PAL EIT test.
 
-* How to run onl EIT test:
+* How to run auto test:
 
-    ONLP EIT:
-    
-    Because of some test item need the user to remove hardware like FAN/PSU/SFP, 
-    
-    it needs to use this EIT test to check if hardware module states are OK or Not.
-    
-    ```
-    $ eit.sh
-    ```
+	Preparation:
+
 
     All test:
     
     These test based on some BASELINE service defined by OCP .
     
-    Please modify all.sh
-    
-     ```
-    ####################################
-
-    rfip=172.17.8.122:8888                  <== DUT IP 
-
-    listener=172.17.10.60:8889              <== Listener IP
-
-    FirmwareVersion=2.1.3.59.21             <== PSME version
-
-    ####################################
-
-    ```   
     Start up PSME on device first and then
     
     ```
-    $ all.sh
+    $ ./all.sh <DUT_IP> <Listener_IP> <PSME_Version>
     ```
-* How to run CI test:
 
-### [CI Build and Test Architecture Model](CI.md)
+    Ex.
 
-```
-+-----------------------+            +----------------------+
-|                       |   1.       |                      |
-|  172.17.10.60         +------------>   172.17.10.64       |
-|Agent                  |            | Agent Build_RSD_PSME |
-|Robot_PSME_Auto_Test   |            |                      |
-|                       |            |                      |
-|  Jenkins Service      |            |                      |
-|       :8080           |            |                      |
-+-------------------+---+            +-----+----------------+
-                    |                      |
-                    |                      |
-                    |3.                    | 2.
-                    |                      |
-                    |                      |
-                 +--v----------------------v---+
-                 |    Target: Switch or OLT    |
-                 |    172.17.10.x              |
-                 |                             |
-                 |                             |
-                 +-----------------------------+
+    For SONiC platform : Port number is 8889
 
+    ```
+    $ ./all.sh 172.17.8.5:8889 172.17.8.10:8889 2.1.3.59.25
+    ```
 
- 1. Start Build on Agent Build_RSD_PSME
+    For ONL platform : Port number is 8888
 
- 2. After build finished, deploy PSME package to Target and start up RF service.
+    ```
+    $ ./all.sh 172.17.8.5:8888 172.17.8.10:8888 2.1.3.59.25
+    ```
 
- 3. Start robot framework automation test to target.
+    NOTE:
 
+    Listener_IP : No function now, You can type any ip address.
 
-```    
-    
- ### Triger Jenkins build and deploy to device and run all.sh test: ###
- 
-```
-    http://172.17.10.60:8080/job/Build_ONL_RF/build?token=05a8ab5 
-```
+    PSM_Version : You can retrive this information from ```~/NOS/OpenNetwokLinux/BuildInternalPSME/PSME/build/install/allinone-deb/bin/psme_allinone_2.1.3.60.01-572cc64_dfd5bc3_amd64.deb
+    ```
+    And The **2.1.3.60.01** is the version of PSME
+

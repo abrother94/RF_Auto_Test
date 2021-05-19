@@ -40,15 +40,50 @@ Verify Redfish PSME Manager Properties
     Should Not Be Empty  ${resp.dict["UUID"]}
     Should Be Equal As Strings  ${resp.dict["Status"]["State"]}  Enabled 
 
-Verify Set Static IPv4 IP address
-    [Documentation]  Verify PSME managers to set IPv4 IP address 
-    [Tags]           Verify_PSME_managers_to_set_IPv4_IP
+Verify Redfish PSME Log Service 
+    [Documentation]  Verify Redfish PSME Log Service
+    [Tags]  Verify Redfish PSME Log Service  
 
-    ${payload}=  Evaluate  json.loads($IPV4)    json 
-    Redfish.Patch  /redfish/v1/Managers/1/EthernetInterfaces/1  body=${payload}
-    # Wait IP get ready
-    Sleep  7s    
-    ...  valid_status_codes=[${HTTP_OK}]
+    ${resp}=  Redfish.Get  redfish/v1/Managers/1/LogServices/1/ 
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+    Should Be Equal As Strings  ${resp.dict["ServiceEnabled"]}   ${TRUE}
+
+    ${payload}=  Create Dictionary
+    ...  ServiceEnabled  ${TRUE}
+
+    ${resp}=  Redfish.Patch  redfish/v1/Managers/1/LogServices/1/  body=${payload}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_NO_CONTENT}
+
+    ${resp}=  Redfish.Get  redfish/v1/Managers/1/LogServices/1/Entries 
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+    ${Entry_count} =  Set Variable  ${resp.dict["Members@odata.count"]}
+    Log to console  "####### Entry count:${Entry_count} ######" 
+    Should Not Be Equal As Integers  ${Entry_count}   0 
+
+    ${payload}=  Create Dictionary
+    ...  TEST=${EMPTY} 
+
+    ${resp}=  Redfish.Post  /redfish/v1/Managers/1/LogServices/1/Actions/LogService.Reset  body=${payload}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+
+    ${resp}=  Redfish.Get  redfish/v1/Managers/1/LogServices/1/Entries 
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+    ${Entry_count} =  Set Variable  ${resp.dict["Members@odata.count"]}
+    Log to console  "####### Entry count:${Entry_count} ######" 
+    Should Be Equal As Integers  ${Entry_count}   0 
+
+    # Send a test log
+    ${resp}=  Redfish.Get  /redfish/v1/EventService/TestEventSubscription
+
+#Verify Set Static IPv4 IP address
+#    [Documentation]  Verify PSME managers to set IPv4 IP address 
+#    [Tags]           Verify_PSME_managers_to_set_IPv4_IP
+
+#    ${payload}=  Evaluate  json.loads($IPV4)    json 
+#    Redfish.Patch  /redfish/v1/Managers/1/EthernetInterfaces/1  body=${payload}
+#    # Wait IP get ready
+#    Sleep  7s    
+#    ...  valid_status_codes=[${HTTP_OK}]
 
 
 *** Keywords ***

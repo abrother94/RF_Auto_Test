@@ -31,11 +31,21 @@ else
     echo "PSME FirmwareVersion ${FirmwareVersion}"
 fi
 
+if [ "${4}" == "" ];then
+    echo "Do not test update service"
+    update_server=
+else
+    update_server=${4}
+    echo "Test update service and image server is on ${update_server}"
+fi
+
 testip=`echo $rfip | awk -F ":" '{print $1}'`
 
-
 ####################################
-rm -rf log*;output.xml;report.html
+#update_server=172.17.8.103
+#update_server=
+rm output.xml;rm report.html;rm -rf OCP-Profiles redfish-Service-Validator Redfish-Service-Validator Redfish-Protocol-Validator log* SchemaFiles
+curl --insecure -X PATCH -D headers.txt https://${rfip}/redfish/v1/Managers/1/LogServices/1/ -d '{"ServiceEnabled":true}'
 curl --insecure -X POST -D headers.txt https://${rfip}/redfish/v1/SessionService/ -d '{"ServiceEnabled":true,"SessionTimeout":600}'
-robot -v OPENBMC_HOST:${rfip} -v LISTENER_HOST:${listener} -v FWV:${FirmwareVersion} -v TESTIP:${testip} redfish/
+robot -v OPENBMC_HOST:${rfip} -v LISTENER_HOST:${listener} -v FWV:${FirmwareVersion} -v TESTIP:${testip} -v UPDATE_SERVER:${update_server} redfish/
 

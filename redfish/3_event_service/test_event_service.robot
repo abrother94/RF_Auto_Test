@@ -9,21 +9,21 @@ Test Setup       Test Setup Execution
 Test Teardown    Test Teardown Execution
 
 *** Variables ***
-${EVENT_ALERT}  { "Name": "This is Alert Subscription event test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS", "Protocol": "Redfish", "EventTypes": [ "Alert" ] }
+${EVENT_ALERT}  { "Name": "This is Alert Subscription event test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS ALERT", "Protocol": "Redfish", "EventTypes": [ "Alert" ] }
 
-${PATCH_EVENT_ALERT}  { "Name": "This is Alert Subscription event patch test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS PATCH TEST FROM AUTO TEST SUBS" }
+${PATCH_EVENT_ALERT}  { "Name": "This is Alert Subscription event patch test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS ALERT" }
+
+${EVENT_RESOURCEADD}  { "Name": "This is ResourceAdded Subscription event test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS RESOURCEADD", "Protocol": "Redfish", "EventTypes": [ "ResourceAdded" ] }
 
 ${PATCH_EVENT_ALERT_NAME}  { "Name": "This is Alert Subscription event patch test name"}
 
-${EVENT_RESOURCEADD}  { "Name": "This is ResourceAdded Subscription event test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS", "Protocol": "Redfish", "EventTypes": [ "ResourceAdded" ] }
-
-${PATCH_EVENT_RESOURCEADD}  { "Name": "This is ResourceAdded Subscription event patch test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS PATCH  TEST FROM AUTO TEST SUBS" }
+${PATCH_EVENT_RESOURCEADD}  { "Name": "This is ResourceAdded Subscription event patch test", "Destination": "https://${LISTENER_HOST}", "Context":"THIS IS TEST FROM AUTO TEST SUBS RESOURCEADD" }
 
 ${PATCH_EVENT_RESOURCEADD_DES}  { "Destination": "https://${LISTENER_HOST}ONLY"}
 
-${EVENT_RESOURCEREMOVE}  { "Name": "This is ResourceRemoved Subscription event test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS", "Protocol": "Redfish", "EventTypes": [ "ResourceRemoved" ] }
+${EVENT_RESOURCEREMOVE}  { "Name": "This is ResourceRemoved Subscription event test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS RESOURCERMV", "Protocol": "Redfish", "EventTypes": [ "ResourceRemoved" ] }
 
-${PATCH_EVENT_RESOURCEREMOVE}  { "Name": "This is ResourceRemoved Subscription event patch test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS PATCH TEST FROM AUTO TEST SUBS"}
+${PATCH_EVENT_RESOURCEREMOVE}  { "Name": "This is ResourceRemoved Subscription event patch test", "Destination": "https://${LISTENER_HOST}", "Context": "THIS IS TEST FROM AUTO TEST SUBS RESOURCERMV"}
 
 ${PATCH_EVENT_RESOURCEREMOVE_CONTEXT}  { "Context": "THIS IS PATCH TEST FROM AUTO TEST SUBS ONLY"}
 
@@ -54,20 +54,20 @@ Verify Redfish Op Del Event
     [Tags]  Op Redfish_Del_Event 
     Redfish Op Del Event 
 
-Verify Redfish ReadOnlyUser Add Event
+Verify Redfish ReadOnly Add Event
     [Documentation]  Subscribe Event
-    [Tags]  ReadOnlyUser Redfish_Add_Event 
-    Redfish ReadOnlyUser Add Event 
+    [Tags]  ReadOnly Redfish_Add_Event 
+    Redfish ReadOnly Add Event 
 
 Verify Redfish Op Add Event
     [Documentation]  Subscribe Event
     [Tags]  Op Redfish_Add_Event 
     Redfish Op Add Event 
 
-Verify Redfish ReadOnlyUser Del Event
+Verify Redfish ReadOnly Del Event
     [Documentation]  Del Subscribed Event
-    [Tags]  ReadOnlyUser Redfish_Del_Event 
-    Redfish ReadOnlyUser Del Event 
+    [Tags]  ReadOnly Redfish_Del_Event 
+    Redfish ReadOnly Del Event 
 
 Verify Redfish Op Del Event
     [Documentation]  Del Subscribed Event
@@ -191,36 +191,36 @@ Redfish Op Del Event
     Redfish.Login
     Redfish.Delete  /redfish/v1/AccountService/Accounts/OpUser
 
-Redfish ReadOnlyUser Add Event
+Redfish ReadOnly Add Event
     [Documentation]  ReadOnly User can't Subscribe Event 
 
-    Redfish Create User  NewReadOnlyUser  ReadOnlyUser1  UserPwd  ReadOnlyUser  ${False}  ${True}
+    Redfish Create User  NewReadOnly  ReadOnly1  UserPwd  ReadOnly  ${False}  ${True}
     Redfish.Logout
-    Redfish.Login  ReadOnlyUser1  UserPwd
+    Redfish.Login  ReadOnly1  UserPwd
 
     ${payload}=  Evaluate  json.loads($EVENT_ALERT)    json 
     ${resp}=  Redfish.Post  /redfish/v1/EventService/Subscriptions/  body=${payload}
-    Should Be Equal As Strings  ${resp.status}  ${HTTP_UNAUTHORIZED}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_METHOD_NOT_ALLOWED}
 
     ${payload}=  Evaluate  json.loads($EVENT_RESOURCEADD)    json 
     ${resp}=  Redfish.Post  /redfish/v1/EventService/Subscriptions/  body=${payload}
-    Should Be Equal As Strings  ${resp.status}  ${HTTP_UNAUTHORIZED}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_METHOD_NOT_ALLOWED}
 
     ${payload}=  Evaluate  json.loads($EVENT_RESOURCEREMOVE)    json 
     ${resp}=  Redfish.Post  /redfish/v1/EventService/Subscriptions/  body=${payload}
-    Should Be Equal As Strings  ${resp.status}  ${HTTP_UNAUTHORIZED}
+    Should Be Equal As Strings  ${resp.status}  ${HTTP_METHOD_NOT_ALLOWED}
 
     Redfish.Logout
     Redfish.Login
     Redfish.Delete  /redfish/v1/AccountService/Accounts/OpUser
 
 
-Redfish ReadOnlyUser Del Event
+Redfish ReadOnly Del Event
     [Documentation]  ReadOnly User can't del Subscribed Event 
 
-    Redfish Create User  NewReadOnlyUser  ReadOnlyUser1  UserPwd  ReadOnlyUser  ${False}  ${True}
+    Redfish Create User  NewReadOnly  ReadOnly1  UserPwd  ReadOnly  ${False}  ${True}
     Redfish.Logout
-    Redfish.Login  ReadOnlyUser1  UserPwd
+    Redfish.Login  ReadOnly1  UserPwd
 
     ${resp_list}=  Redfish_Utils.List Request
     ...  redfish/v1/EventService/Subscriptions/

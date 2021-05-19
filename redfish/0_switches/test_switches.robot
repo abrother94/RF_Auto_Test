@@ -9,8 +9,8 @@ Test Teardown    Test Teardown Execution
 
 *** Variables ***
 
-${OP_DOWN}  {"OperationalState": "Down"} 
-${OP_UP}  {"OperationalState": "Up"} 
+${TX_ENABLE}  {"TxDisabledState": false} 
+${TX_DISABLE}  {"TxDisabledState": true} 
 
 *** Test Cases ***
 
@@ -18,9 +18,9 @@ Verify Stress loop test
     [Documentation]  Test SFP port tx disable stress test 
     [Tags]  Test Stress loop test 
 
-    : FOR  ${i}  IN RANGE   1   50 
-    \  Test SFP Port tx_disable function  ${i} 
-
+    FOR  ${i}  IN RANGE   1   2 
+    Test SFP Port tx_disable function  ${i} 
+    END
 
 *** Keywords ***
 
@@ -51,17 +51,21 @@ Test SFP Port tx_disable function
     ${n2}  Set Variable  ${item_count} 
 
 
-      : FOR  ${i}  IN RANGE   ${n1}   ${n2} 
-      \  Test Tx Disable Down  ${i}
+      FOR  ${i}  IN RANGE   ${n1}   ${n2} 
+      Test Tx Disable Down  ${i}
+      END
 
-      : FOR  ${i}  IN RANGE   ${n1}   ${n2} 
-      \  Test If Tx Op Down   ${i}
+      FOR  ${i}  IN RANGE   ${n1}   ${n2} 
+      Test If Tx State Down   ${i}
+      END
 
-      : FOR  ${j}  IN RANGE   ${n1}   ${n2} 
-      \  Test Tx Disable Up  ${j}
+      FOR  ${j}  IN RANGE   ${n1}   ${n2} 
+      Test Tx Disable Up  ${j}
+      END
 
-      : FOR  ${i}  IN RANGE   ${n1}   ${n2} 
-      \  Test If Tx Op Up   ${i}
+      FOR  ${i}  IN RANGE   ${n1}   ${n2} 
+      Test If Tx State Up   ${i}
+      END
 
 Test Tx Disable Down
     [Documentation]  Test SFP port tx disable down function 
@@ -70,19 +74,23 @@ Test Tx Disable Down
 
     ${resp}=  Redfish.Get  /redfish/v1/EthernetSwitches/1/Ports/${ID} 
     Should Be Equal As Strings  ${resp.status}  ${HTTP_OK}
+    Log to console              ${resp}
+
 
 
     ${PORT_ENABLE} =  Set Variable  ${resp.dict['Status']['State']}
     ${PORT_ID} =  Set Variable  ${resp.dict['PortId']}
+    ${IS_TX_WORKABLE} =  Set Variable  ${resp.dict['TxDisabledState']}
     Log to console              ${PORT_ENABLE}
     Log to console              ${PortId}
-    Log to console              ${resp.dict['OperationalState']}
+    Log to console              ${resp.dict['TxDisabledState']}
+    Log to console              ${IS_TX_WORKABLE}
 
-           Run Keyword If  '${PORT_ENABLE}' == 'Enabled' 
-      \    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port'
-      \    ...        Test Tx Op Down   ${ID} 
-      \    ...    ELSE          
-      \    ...          Log to console  "####### Disabled ######" 
+           Run Keyword If  '${PORT_ENABLE}' == 'Enabled' and '${IS_TX_WORKABLE}' != 'None' 
+           ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port' or '${PORT_ID}' == 'QSFP port'
+    ...        Test Tx State Down   ${ID} 
+           ...    ELSE          
+           ...          Log to console  "####### Disabled ######" 
 
 Test Tx Disable Up 
     [Documentation]  Test SFP port tx disable Up function 
@@ -95,36 +103,35 @@ Test Tx Disable Up
 
     ${PORT_ENABLE} =  Set Variable  ${resp.dict['Status']['State']}
     ${PORT_ID} =  Set Variable  ${resp.dict['PortId']}
+    ${IS_TX_WORKABLE} =  Set Variable  ${resp.dict['TxDisabledState']}
     Log to console              ${PORT_ENABLE}
     Log to console              ${PortId}
-    Log to console              ${resp.dict['OperationalState']}
+    Log to console              ${resp.dict['TxDisabledState']}
 
-           Run Keyword If  '${PORT_ENABLE}' == 'Enabled' 
-      \    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port'
-      \    ...        Test Tx Op Up   ${ID} 
-      \    ...    ELSE          
-      \    ...          Log to console  "####### Disable ######" 
+           Run Keyword If  '${PORT_ENABLE}' == 'Enabled' and '${IS_TX_WORKABLE}' != 'None' 
+           ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port' or '${PORT_ID}' == 'QSFP port'
+    ...        Test Tx State Up   ${ID} 
+           ...    ELSE          
+           ...          Log to console  "####### Disable ######" 
 
 
-Test Tx Op Down 
+Test Tx State Down 
     [Documentation]  Test SFP port tx disable function 
     [Tags]  Test tx_disable 
     [Arguments]   ${ID} 
 
-    ${payload}=  Evaluate  json.loads($OP_DOWN)    json 
+    ${payload}=  Evaluate  json.loads($TX_DISABLE)    json 
     Redfish.Patch  /redfish/v1/EthernetSwitches/1/Ports/${ID}  body=${payload}
 
-
-Test Tx Op Up 
+Test Tx State Up 
     [Documentation]  Test SFP port tx disable function 
     [Tags]  Test tx_disable 
     [Arguments]   ${ID} 
 
-    ${payload}=  Evaluate  json.loads($OP_UP)    json 
+    ${payload}=  Evaluate  json.loads($TX_ENABLE)    json 
     Redfish.Patch  /redfish/v1/EthernetSwitches/1/Ports/${ID}  body=${payload}
 
-
-Test If Tx Op Down 
+Test If Tx State Down 
     [Documentation]  Test if SFP port tx disable function 
     [Tags]  Test if tx_disable down 
     [Arguments]   ${ID} 
@@ -134,13 +141,13 @@ Test If Tx Op Down
 
     ${PORT_ENABLE} =  Set Variable  ${resp.dict['Status']['State']}
     ${PORT_ID} =  Set Variable  ${resp.dict['PortId']}
+    ${IS_TX_WORKABLE} =  Set Variable  ${resp.dict['TxDisabledState']}
 
-    Run Keyword If  '${PORT_ENABLE}' == 'Enabled' 
-    \    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port'
-    \    ...        Should Be Equal As Strings  ${resp.dict['OperationalState']}  Down 
+    Run Keyword If  '${PORT_ENABLE}' == 'Enabled' and '${IS_TX_WORKABLE}' != 'None' 
+    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port' or '${PORT_ID}' == 'QSFP port'
+    ...        Should be true  ${resp.dict['TxDisabledState']} == ${TRUE} 
 
-
-Test If Tx Op Up 
+Test If Tx State Up 
     [Documentation]  Test if SFP port tx disable function 
     [Tags]  Test if tx_disable up 
     [Arguments]   ${ID} 
@@ -150,8 +157,9 @@ Test If Tx Op Up
 
     ${PORT_ENABLE} =  Set Variable  ${resp.dict['Status']['State']}
     ${PORT_ID} =  Set Variable  ${resp.dict['PortId']}
+    ${IS_TX_WORKABLE} =  Set Variable  ${resp.dict['TxDisabledState']}
 
-    Run Keyword If  '${PORT_ENABLE}' == 'Enabled' 
-    \    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port'
-    \    ...        Should Be Equal As Strings  ${resp.dict['OperationalState']}  Up 
+    Run Keyword If  '${PORT_ENABLE}' == 'Enabled' and '${IS_TX_WORKABLE}' != 'None'
+    ...        Run Keyword If  '${PORT_ID}' == 'PON port' or '${PORT_ID}' == 'SFP port' or '${PORT_ID}' == 'QSFP port'
+    ...        Should be true  ${resp.dict['TxDisabledState']} == ${FALSE} 
 
