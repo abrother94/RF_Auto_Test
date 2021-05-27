@@ -35,6 +35,10 @@ Verify Restful API for omci send
     [Documentation]  Test omci send 
     [Tags]  Test omci send 
     Test omci send 
+Verify Restful API for pkt send
+    [Documentation]  Test pkt send 
+    [Tags]  Test pkt send 
+    Test pkt send
 
 *** Keywords ***
 
@@ -134,6 +138,10 @@ Test omci send
     Test Send Omci  1  ${PON_PORT_ID} 
     Enable All Tx Port
 
+Test pkt send
+    [Documentation]  Send pkt raw data
+    [Tags]  pkt send 
+    Test Send Pkt  1  ${PON_PORT_ID}  1024
 Test Bal Enable 
     [Documentation]  Enable Bal 
     [Tags]  Verify_Bal_Enable
@@ -461,4 +469,15 @@ Test Send Omci
       ${resp}=  Redfish.Post  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs/${ONU_ID}/Omci  body=${payload_["raw_data"][${i}]}
     END
 
+Test Send Pkt
+    [Documentation]  Send Pkt function 
+    [Tags]  Send Pkt function 
+    [Arguments]  ${ONU_ID}  ${PON_PORT_ID}  ${GEM_PORT}
 
+    ${payload_}=  Evaluate  json.loads($PKT_RAW)    json 
+
+    FOR  ${i}  IN RANGE   0   2000 
+      Log to console  "################### raw[${payload_["raw_data"][${0}]}] ###################" 
+      ${resp}=  Redfish.Post  /redfish/v1/EthernetSwitches/1/Ports/${PON_PORT_ID}/ONUs/${ONU_ID}/Pkt  body=${payload_["raw_data"][${0}]}
+      Should Be Equal As Strings  ${resp.status}  ${HTTP_OK} 
+    END
